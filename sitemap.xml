@@ -1,0 +1,19 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/GOfan.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/GOfan-package.html</loc></url>
+<url><loc>/reference/filterGraph.html</loc></url>
+<url><loc>/reference/geom_sunburst.html</loc></url>
+<url><loc>/reference/getAncestors_df.html</loc></url>
+<url><loc>/reference/getGOalias.html</loc></url>
+<url><loc>/reference/getGraph.html</loc></url>
+<url><loc>/reference/ggSunburst.html</loc></url>
+<url><loc>/reference/goGraph.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/simplifyDAG.html</loc></url>
+<url><loc>/reference/sunburstGO.html</loc></url>
+</urlset>
+
