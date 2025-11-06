@@ -7,7 +7,7 @@
 getGraph(df, org, termID = "ID", onto = c("BP", "CC", "MF"))
 }
 \arguments{
-\item{df}{A data frame with enriched GO iterms}
+\item{df}{A data frame with enriched GO terms}
 
 \item{org}{An Go3AnnDbBimap object eg org.Dr.egGO2ALLEGS}
 
@@ -19,5 +19,12 @@ getGraph(df, org, termID = "ID", onto = c("BP", "CC", "MF"))
 A igraph graph.
 }
 \description{
-Prepare the graph for Sunburst plot
+By a given GO enrichment results, extract GO ancester and offsprings info
+from GO.db and then generate a simplified tree like graph.
+}
+\examples{
+library(org.Dr.eg.db)
+goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916","GO:0050804")
+g <- getGraph(data.frame(ID=goids), org=org.Dr.eg.db, onto='BP')
+
 }

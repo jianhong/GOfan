@@ -21,8 +21,47 @@ jaccard <- function(d1, d2) {
 }
 
 rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
-    # linearly map x from [from[1], from[2]] to [to[1], to[2]]
-    (x - from[1]) / (from[2] - from[1]) * (to[2] - to[1]) + to[1]
+    # Input validation
+    if (missing(x)) stop("x is required")
+
+    if (length(x)==0){
+        return(numeric(0))
+    }
+
+    if (missing(to)) stop("to range is required")
+
+    if (!is.numeric(x)) stop("x must be numeric")
+    if (!is.numeric(from) || length(from) != 2) {
+        stop("from must be a numeric vector of length 2")
+    }
+    if (!is.numeric(to) || length(to) != 2) {
+        stop("to must be a numeric vector of length 2")
+    }
+
+    if (any(is.na(from))) stop("from range cannot contain NA")
+    if (any(is.na(to))) stop("to range cannot contain NA")
+    if (any(is.infinite(from))) stop("from range cannot contain Inf")
+    if (any(is.infinite(to))) stop("to range cannot contain Inf")
+
+    # Check for zero-width input range
+    if (from[1] == from[2]) {
+        warning("Input range has zero width, returning midpoint of output range")
+        return(rep(mean(to), length(x)))
+    }
+
+    # y = ((x - from[1]) / (from[2] - from[1])) * (to[2] - to[1]) + to[1]
+    from_min <- from[1]
+    from_max <- from[2]
+    to_min <- to[1]
+    to_max <- to[2]
+
+    # Normalize to [0, 1]
+    normalized <- (x - from_min) / (from_max - from_min)
+
+    # Scale to target range
+    mapped <- normalized * (to_max - to_min) + to_min
+
+    return(mapped)
 }
 
 #' @importFrom grDevices col2rgb rgb
@@ -40,4 +79,9 @@ color2gray <- function(col, rate) {
     # Return named vector
     names(gray_hex) <- col
     gray_hex
+}
+
+parse_ratio <- function(x) {
+    stopifnot(grepl('/', x))
+    vapply(x, function(.ele) eval(parse(text = .ele)), numeric(1L))
 }

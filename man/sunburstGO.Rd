@@ -22,7 +22,7 @@ sunburstGO(
 )
 }
 \arguments{
-\item{df}{A data frame with enriched GO iterms}
+\item{df}{A data frame with enriched GO terms}
 
 \item{org}{An OrgDb object}
 
@@ -42,9 +42,9 @@ Otherwise, will simply re-scale to .}
 
 \item{filterNodesByEdgeNumber}{Filter the sub graphs by the edge numbers.}
 
-\item{mustkeep}{The GO iterms must be kept.}
+\item{mustkeep}{The GO terms must be kept.}
 
-\item{onlyKeep}{Only keep branches with give GO iterms.}
+\item{onlyKeep}{Only keep branches with give GO terms.}
 
 \item{fillNAby0}{Fill the NA values by 0 or not for the color column.}
 

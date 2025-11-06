@@ -2,7 +2,7 @@
 % Please edit documentation in R/filterGraph.R
 \name{filterGraph}
 \alias{filterGraph}
-\title{Cut the enriched GO iterms by the distances from the root after simplify}
+\title{Cut the enriched GO terms by the distances from the root after simplify}
 \usage{
 filterGraph(
   g,
@@ -22,9 +22,9 @@ filterGraph(
 
 \item{filterNodesByEdgeNumber}{Filter the ub graphs by the edge number.}
 
-\item{mustkeep}{The GO iterms must be kept.}
+\item{mustkeep}{The GO terms must be kept.}
 
-\item{onlyKeep}{Only keep branches with give GO iterms.}
+\item{onlyKeep}{Only keep branches with give GO terms.}
 }
 \value{
 A igraph object after filtering
@@ -33,6 +33,8 @@ A igraph object after filtering
 Cut the input igraph object by the distances from the root.
 }
 \examples{
-# example code
+library(igraph)
+g_gnp <- sample_gnp(n = 25, p = 0.05)
+filterGraph(g_gnp, leaveTerms=V(g_gnp), cutoff=2)
 
 }

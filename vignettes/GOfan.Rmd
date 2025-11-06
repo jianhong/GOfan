@@ -21,7 +21,7 @@ output:
 ```{r, echo=FALSE, results="hide", warning=FALSE}
 suppressPackageStartupMessages({
     library(GOfan)
-    library(GO.db)
+    library(org.Dr.eg.db)
     library(ggplot2)
 })
 knitr::opts_chunk$set(warning = FALSE, message = FALSE,
@@ -62,7 +62,6 @@ Step 4. Generate the sunburst plot.
 ```{r quickstart}
 library(ggplot2)
 library(GOfan)
-library(GO.db)
 library(org.Dr.eg.db)
 ## load data
 csv <- system.file("extdata", "GO.BP.enrichment.csv", package = "GOfan")

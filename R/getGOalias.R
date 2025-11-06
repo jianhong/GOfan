@@ -9,9 +9,6 @@
 #' ids <- c("GO:0099536", "GO:0099537", "GO:0007268",
 #'          "GO:0098916", "GO:0050804", "GO:0099177")
 #' eids <- getGOalias(ids, org.Dr.eg.db)
-#' a<-mget('GO:0099536', org.Dr.egGO2ALLEGS)
-#' b<-getGOalias('GO:0099536', org.Dr.eg.db)
-#' identical(a, b)
 getGOalias <- function(GO_IDs, org){
     is_GO_IDs(GO_IDs)
     if(is(org, 'Go3AnnDbBimap')){

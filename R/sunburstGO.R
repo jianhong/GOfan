@@ -1,5 +1,5 @@
 #' Sunburst plot for enriched GO iterm
-#' @param df A data frame with enriched GO iterms
+#' @param df A data frame with enriched GO terms
 #' @param org An OrgDb object
 #' @param g An igraph graph. Output of \link{getGraph}.
 #' @param termID Column name in df which store the GO IDs
@@ -11,8 +11,8 @@
 #' Otherwise, will simply re-scale to .
 #' @param GO_annotation_level_cutoff The cutoff of the GO annotation levels
 #' @param filterNodesByEdgeNumber Filter the sub graphs by the edge numbers.
-#' @param mustkeep The GO iterms must be kept.
-#' @param onlyKeep Only keep branches with give GO iterms.
+#' @param mustkeep The GO terms must be kept.
+#' @param onlyKeep Only keep branches with give GO terms.
 #' @param fillNAby0 Fill the NA values by 0 or not for the color column.
 #' @param onto The ontology category of the GO IDs
 #' @param plotBy plot tools, plotly or ggplot2.
@@ -106,14 +106,23 @@ sunburstGO <- function(df,
             plotdata$sub_rect <- df[match(plotdata$id, df[, termID]),
                                     sub_rect]
             args$legendTitle <- c(args$legendTitle, sub_rect)
-            if(all(df[, sub_rect]==round(df[, sub_rect])) &&
-               any(df[, sub_rect]>1)){
-                ## it is a count number
-                allAlias <- getGOalias(plotdata$id, org=org)
-                plotdata$sub_rect <- plotdata$sub_rect/
-                    lengths(lapply(allAlias, unique))
-                plotdata$sub_rect[is.na(plotdata$sub_rect)] <- 0
-                if(any(plotdata$sub_rect>1)){
+            if(is.character(plotdata$sub_rect)){
+                plotdata$sub_rect <- parse_ratio(plotdata$sub_rect)
+            }else{
+                if(is.numeric(df[, sub_rect])){
+                    if(all(df[, sub_rect]==round(df[, sub_rect])) &&
+                       any(df[, sub_rect]>1)){
+                        ## it is a count number
+                        allAlias <- getGOalias(plotdata$id, org=org)
+                        plotdata$sub_rect <- plotdata$sub_rect/
+                            lengths(lapply(allAlias, unique))
+                        plotdata$sub_rect[is.na(plotdata$sub_rect)] <- 0
+                        if(any(plotdata$sub_rect>1)){
+                            stop('Can not get the proper sub_rect proportion.',
+                                 'Please provide numbers within [0, 1].')
+                        }
+                    }
+                }else{
                     stop('Can not get the proper sub_rect proportion.',
                          'Please provide numbers within [0, 1].')
                 }
