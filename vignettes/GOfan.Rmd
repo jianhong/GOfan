@@ -1,0 +1,129 @@
+---
+title: "GOfan Vignette: GO Enrichment Sunburst Plot"
+author: "Jianhong Ou"
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('GOfan')`"
+abstract: >
+  GOfan provides an intuitive approach to visualize Gene Ontology (GO) enrichment results. By converting complex GO DAGs into clean, circular representations, it allows researchers to quickly grasp the hierarchical structure and biological significance of enriched terms. The interactive and customizable visualizations facilitate exploration of key GO categories, enhancing interpretation and presentation of enrichment analyses.
+vignette: >
+  %\VignetteIndexEntry{GOfan Vignette: GO Enrichment Sunburst Plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output:
+  html_document:
+    theme: simplex
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    fig_caption: true
+---
+
+```{r, echo=FALSE, results="hide", warning=FALSE}
+suppressPackageStartupMessages({
+    library(GOfan)
+    library(GO.db)
+    library(ggplot2)
+})
+knitr::opts_chunk$set(warning = FALSE, message = FALSE,
+                      fig.width = 9, fig.height = 9,
+                      dpi = 72)
+```
+## Introduction
+Gene Ontology (GO) enrichment analysis is an essential approach for interpreting large-scale omics data. However, visualizing GO results in an informative and intuitive way remains challenging. Because GO terms form a directed acyclic graph (DAG) rather than a simple hierarchy, direct graph-based plots often appear cluttered and difficult to interpret. Meanwhile, common alternatives such as heatmaps or dot plots simplify the presentation but lose the hierarchical relationships among GO terms.
+
+`GOfan` was developed to simplify GO enrichment visualization while preserving the structural context of the ontology. Inspired by the [SynGO](https://syngoportal.org/) visualization, `GOfan` represents GO terms in a sunburst layout, where each ring corresponds to a hierarchy level and each segment represents a GO term. This radial organization enables users to focus on one or more biological categories and intuitively explore how enriched terms are connected.
+
+Any enrichment result containing GO identifiers can be visualized by `GOfan` as sunburst plot. Users can map additional information such as p-values or gene counts to colors, highlighting significant biological patterns in a compact and publication-ready figure. Future versions will further enhance the visualization by incorporating additional visual cues such as size or shape.
+
+By translating the complex GO DAG into a clean, circular representation, `GOfan` helps researchers quickly grasp the biological meaning of enrichment results through a clear and accessible visualization.
+
+
+## Installation
+
+```{r, eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("jianhong/GOfan")
+```
+
+## Quick start
+
+There are four main steps to visualize your data with `GOfan`:
+
+Step 1. Load the required library.
+
+Step 2. Prepare the input data frame.
+
+Step 3. Create a graph representing the hierarchical relationships among GO terms.
+
+Step 4. Generate the sunburst plot.
+
+```{r quickstart}
+library(ggplot2)
+library(GOfan)
+library(GO.db)
+library(org.Dr.eg.db)
+## load data
+csv <- system.file("extdata", "GO.BP.enrichment.csv", package = "GOfan")
+bp <- read.csv(csv, row.names=1)
+head(bp, n=2)
+## build a graph of hierarchical GO term relationships.
+g <- getGraph(bp, org=org.Dr.eg.db, onto='BP')
+## visualization
+sunburstGO(bp, g, org=org.Dr.eg.db, fill='qvalue',
+           filterNodesByEdgeNumber=0)
+```
+
+In the example above, we used the [plotly](https://plotly.com/r/) package to visualize the results. 
+One advantage of [plotly](https://plotly.com/r/) is its interactivity.
+You can view all labels by hovering the mouse over each small cell,
+and clicking on a cell zooms into that GO term along with its offspring.
+
+However, [plotly](https://plotly.com/r/) has some limitations when do sunburst plot:
+legends are not available, and plots can only be saved as PNG files.
+
+To address these issues, you can use [ggplot2](https://ggplot2.tidyverse.org/) for visualization.
+With [ggplot2](https://ggplot2.tidyverse.org/), plots can be saved in multiple formats (see [`?ggsave`](https://ggplot2.tidyverse.org/reference/ggsave.html)),
+including vector graphics, 
+and you have greater flexibility in color customization 
+(see [`?scale_fill_continuous`](https://ggplot2.tidyverse.org/reference/scale_colour_continuous.html).
+In addition, by using the `onlyKeep` parameter, 
+you can focus on a specific subset of GO terms.
+
+```{r plotByggplot2}
+sunburstGO(bp, g, org=org.Dr.eg.db, fill='qvalue',
+           onlyKeep = c('GO:0099536', 'GO:0046903', 'GO:0034330'),
+           plotBy='ggplot2') + 
+    scale_fill_continuous(palette = 'YlOrRd')
+```
+
+Moreover, you can customize the start and end positions of the polar plot to 
+create a fan-shaped visualization. 
+```{r fanplot}
+sunburstGO(bp, g, org=org.Dr.eg.db,
+           fill='qvalue', sub_rect = 'count',
+           onlyKeep = c('GO:0099536'),
+           plotBy='ggplot2',
+           fontsize = 2,
+           start=0, end=pi/2) + 
+    scale_fill_continuous(palette = 'YlOrRd')
+```
+
+You can also incorporate a second factor into the plot. 
+For example, the **q-value** can be shown by color, 
+while the **gene ratio** for each category can be represented by 
+the **area proportion** of the cell’s foreground to background color.
+
+```{r show-prebuilt-svg, echo=FALSE, out.width="90%", echo=FALSE}
+knitr::include_graphics(system.file("extdata",
+                                    "sample_plot.svg",
+                                    package = "GOfan"))
+```
+
+## SessionInfo
+
+```{r pressure, echo=FALSE}
+sessionInfo()
+```
+
