@@ -131,9 +131,7 @@ while the **gene ratio** for each category can be represented by
 the **area proportion** of the cell’s foreground to background color.
 
 ```{r show-prebuilt-svg, echo=FALSE, out.width="90%", echo=FALSE}
-knitr::include_graphics(system.file("extdata",
-                                    "sample_plot.svg",
-                                    package = "GOfan"))
+knitr::include_graphics(file.path('figures', "sample_plot.svg"))
 ```
 
 ## SessionInfo
