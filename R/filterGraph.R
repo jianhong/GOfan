@@ -4,7 +4,7 @@
 #' @param g A igraph object
 #' @param leaveTerms Leaves must contained GO terms.
 #' @param cutoff The cutoff distance from the root
-#' @param filterNodesByEdgeNumber Filter the ub graphs by the edge number.
+#' @param filterNodesByEdgeNumber Filter the graphs by the edge number.
 #' @param mustkeep The GO terms must be kept.
 #' @param onlyKeep Only keep branches with give GO terms.
 #' @return A igraph object after filtering

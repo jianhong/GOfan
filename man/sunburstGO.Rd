@@ -2,7 +2,7 @@
 % Please edit documentation in R/sunburstGO.R
 \name{sunburstGO}
 \alias{sunburstGO}
-\title{Sunburst plot for enriched GO iterm}
+\title{Sunburst plot for enriched GO term}
 \usage{
 sunburstGO(
   df,
@@ -58,9 +58,13 @@ Otherwise, will simply re-scale to .}
 A plot handle
 }
 \description{
-Sunburst plot for enriched GO iterm
+Sunburst plot for enriched GO term
 }
 \examples{
-# example code
-
+library(org.Dr.eg.db)
+df <- data.frame(
+    ID=c("GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
+    qvalue=-10*log10(runif(4, max=0.05))
+)
+sunburstGO(df, org.Dr.eg.db)
 }

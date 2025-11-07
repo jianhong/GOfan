@@ -20,8 +20,10 @@ graph2tree <- function(g){
     path_list <- lapply(all_paths, function(p) names(V(g)[p]))
 
     # Pad to equal length (for data.frame)
-    maxlen <- max(sapply(path_list, length))
-    path_mat <- t(sapply(path_list, function(p) c(p, rep(NA, maxlen - length(p)))))
+    maxlen <- max(lengths(path_list))
+    path_mat <- t(vapply(path_list, function(p)
+        c(p, rep(NA, maxlen - length(p))),
+        FUN.VALUE = character(maxlen)))
 
     # Make it a data.frame with column names
     colnames(path_mat) <- paste0("level", seq_len(maxlen))

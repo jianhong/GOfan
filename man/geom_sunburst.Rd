@@ -170,5 +170,20 @@ whole.
 }
 
 \examples{
-#examples
+plotdata <- data.frame(
+    id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
+    x=0.5,
+    y=seq.int(5),
+    xmin=0,
+    ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
+    xmax=1,
+    ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
+    fill=seq(1, 5),
+    label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
+        'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+)
+library(ggplot2)
+ggplot(plotdata, aes(x=x, y=y, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
+      fill=fill, label=label)) + geom_sunburst(size=0.5, angle=-90) +
+      coord_polar()
 }

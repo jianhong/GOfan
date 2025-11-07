@@ -1,7 +1,7 @@
-#' Creating igraph graphs from ancester_offspring data frame
+#' Creating igraph graphs from ancestor_offspring data frame
 #' @description
 #' This function creates an igraph graph from one data frames containing
-#' the ancester and offspring information.
+#' the ancestor and offspring information.
 #' @param df A data frame, output of \link{getAncestors_df}
 #' @return A igraph graph.
 #' @importFrom igraph graph_from_data_frame

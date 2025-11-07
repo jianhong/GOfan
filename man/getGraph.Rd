@@ -19,7 +19,7 @@ getGraph(df, org, termID = "ID", onto = c("BP", "CC", "MF"))
 A igraph graph.
 }
 \description{
-By a given GO enrichment results, extract GO ancester and offsprings info
+By a given GO enrichment results, extract GO ancestor and offspring info
 from GO.db and then generate a simplified tree like graph.
 }
 \examples{

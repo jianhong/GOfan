@@ -2,7 +2,7 @@
 % Please edit documentation in R/goGraph.R
 \name{goGraph}
 \alias{goGraph}
-\title{Creating igraph graphs from ancester_offspring data frame}
+\title{Creating igraph graphs from ancestor_offspring data frame}
 \usage{
 goGraph(df)
 }
@@ -14,7 +14,7 @@ A igraph graph.
 }
 \description{
 This function creates an igraph graph from one data frames containing
-the ancester and offspring information.
+the ancestor and offspring information.
 }
 \examples{
 goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916","GO:0050804")

@@ -15,7 +15,7 @@ getGOalias <- function(GO_IDs, org){
         out <- mget(GO_IDs, org, ifnotfound = NA)
     }else{
         out <- tryCatch({
-            suppressMessages(
+            suppressMessages(## used to suppress the select 1:1 message
                 res <- AnnotationDbi::select(org, keys=GO_IDs,
                                              columns=c('ENTREZID'),
                                              keytype = "GOALL")

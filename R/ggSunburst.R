@@ -20,7 +20,19 @@
 #' @param ... Other parameters (except theta) passed to \link[ggplot2]{coord_radial}.
 #' @return A \code{\link[ggplot2]{ggplot}} object
 #' @examples
-#' # example code
+#' plotdata <- data.frame(
+#'     id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
+#'     x=0.5,
+#'     y=seq.int(5),
+#'     xmin=0,
+#'     ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
+#'     xmax=1,
+#'     ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
+#'     fill=seq(1, 5),
+#'     label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
+#'         'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+#' )
+#' ggSunburst(plotdata, end=pi/2)
 #'
 ggSunburst <- function(plotdata, fontsize=1, rotate90=NULL,
                        maxCharacters=30,
@@ -42,7 +54,7 @@ ggSunburst <- function(plotdata, fontsize=1, rotate90=NULL,
     ## current, can only handle default expansion(mult=0.05, add=0)
     stopifnot(is.logical(expand))
 
-    compute_angle = function(p, start=0, end=2*pi, expand=FALSE){
+    compute_angle <- function(p, start=0, end=2*pi, expand=FALSE){
         expansion <- 0.05
         if(expand){
             p <- p * (1-2*expansion) + expansion
@@ -136,9 +148,9 @@ ggSunburst <- function(plotdata, fontsize=1, rotate90=NULL,
 #' into the rectangle.
 #' @noRd
 #' @importFrom vctrs vec_interleave
-#' @importFrom ggplot2 ggproto from_theme aes draw_key_polygon Geom make_constructor fill_alpha layer
+#' @importFrom ggplot2 ggproto from_theme aes draw_key_polygon Geom make_constructor fill_alpha layer GeomPolygon gg_par
 #' @importFrom scales col_mix alpha
-#' @importFrom grid grobName textGrob gList
+#' @importFrom grid grobName textGrob gList rectGrob
 GeomSunburst <- ggproto(
     "GeomSunburst", Geom,
     default_aes = aes(
@@ -710,5 +722,20 @@ fix_fontsize <- function(data, labels, size.unit,
 #' }
 #'
 #' @examples
-#' #examples
+#' plotdata <- data.frame(
+#'     id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
+#'     x=0.5,
+#'     y=seq.int(5),
+#'     xmin=0,
+#'     ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
+#'     xmax=1,
+#'     ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
+#'     fill=seq(1, 5),
+#'     label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
+#'         'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+#' )
+#' library(ggplot2)
+#' ggplot(plotdata, aes(x=x, y=y, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
+#'       fill=fill, label=label)) + geom_sunburst(size=0.5, angle=-90) +
+#'       coord_polar()
 geom_sunburst <- make_constructor(GeomSunburst)

@@ -20,7 +20,7 @@ filterGraph(
 
 \item{cutoff}{The cutoff distance from the root}
 
-\item{filterNodesByEdgeNumber}{Filter the ub graphs by the edge number.}
+\item{filterNodesByEdgeNumber}{Filter the graphs by the edge number.}
 
 \item{mustkeep}{The GO terms must be kept.}
 

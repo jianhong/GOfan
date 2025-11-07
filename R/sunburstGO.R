@@ -1,4 +1,4 @@
-#' Sunburst plot for enriched GO iterm
+#' Sunburst plot for enriched GO term
 #' @param df A data frame with enriched GO terms
 #' @param org An OrgDb object
 #' @param g An igraph graph. Output of \link{getGraph}.
@@ -24,8 +24,12 @@
 #' @importFrom plotly plot_ly
 #' @export
 #' @examples
-#' # example code
-#'
+#' library(org.Dr.eg.db)
+#' df <- data.frame(
+#'     ID=c("GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
+#'     qvalue=-10*log10(runif(4, max=0.05))
+#' )
+#' sunburstGO(df, org.Dr.eg.db)
 sunburstGO <- function(df,
                        org,
                        g,
@@ -49,7 +53,7 @@ sunburstGO <- function(df,
     onto <- match.arg(onto)
     fillNAby0 <- fillNAby0[1]
     if(missing(g)){
-        g <- getGraph(as.character(df[, termID]), org=org, onto='BP')
+        g <- getGraph(df, org=org, termID = termID, onto='BP')
     }else{
         stopifnot(is(g, 'igraph'))
     }

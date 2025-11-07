@@ -27,6 +27,18 @@ suppressPackageStartupMessages({
 knitr::opts_chunk$set(warning = FALSE, message = FALSE,
                       fig.width = 9, fig.height = 9,
                       dpi = 72)
+is_bioconductor_build <- function() {
+  # Common Bioconductor build indicators
+  bioc_env  <- Sys.getenv("RCHECK_ENV", unset = NA)
+  bioc_user <- Sys.info()[["user"]]
+  bioc_home <- Sys.getenv("HOME", unset = "")
+
+  any(
+    !is.na(bioc_env),
+    grepl("biocbuild", bioc_user, ignore.case = TRUE),
+    grepl("biocbuild", bioc_home, ignore.case = TRUE)
+  )
+}
 ```
 ## Introduction
 Gene Ontology (GO) enrichment analysis is an essential approach for interpreting large-scale omics data. However, visualizing GO results in an informative and intuitive way remains challenging. Because GO terms form a directed acyclic graph (DAG) rather than a simple hierarchy, direct graph-based plots often appear cluttered and difficult to interpret. Meanwhile, common alternatives such as heatmaps or dot plots simplify the presentation but lose the hierarchical relationships among GO terms.
@@ -69,9 +81,13 @@ bp <- read.csv(csv, row.names=1)
 head(bp, n=2)
 ## build a graph of hierarchical GO term relationships.
 g <- getGraph(bp, org=org.Dr.eg.db, onto='BP')
+```
+
+```{r plotly, eval=!is_bioconductor_build()}
 ## visualization
 sunburstGO(bp, g, org=org.Dr.eg.db, fill='qvalue',
-           filterNodesByEdgeNumber=0)
+           filterNodesByEdgeNumber=0,
+           plotBy = 'plotly')
 ```
 
 In the example above, we used the [plotly](https://plotly.com/r/) package to visualize the results. 
@@ -99,7 +115,7 @@ sunburstGO(bp, g, org=org.Dr.eg.db, fill='qvalue',
 
 Moreover, you can customize the start and end positions of the polar plot to 
 create a fan-shaped visualization. 
-```{r fanplot}
+```{r fanplot, eval=FALSE}
 sunburstGO(bp, g, org=org.Dr.eg.db,
            fill='qvalue', sub_rect = 'count',
            onlyKeep = c('GO:0099536'),

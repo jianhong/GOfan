@@ -1,6 +1,6 @@
 #' Prepare the graph for Sunburst plot
 #' @description
-#' By a given GO enrichment results, extract GO ancester and offsprings info
+#' By a given GO enrichment results, extract GO ancestor and offspring info
 #' from GO.db and then generate a simplified tree like graph.
 #'
 #' @param df A data frame with enriched GO terms
@@ -23,7 +23,7 @@ getGraph <- function(df,
     stopifnot(termID %in% colnames(df))
     onto <- match.arg(onto)
     stopifnot(is(org, 'OrgDb') || is(org, 'Go3AnnDbBimap'))
-    ## get all ancesters
+    ## get all ancestors
     go_terms <- df[, termID]
     anc <- getAncestors_df(go_terms, onto = onto)
     g <- goGraph(anc)

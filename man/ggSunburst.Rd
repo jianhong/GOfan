@@ -48,6 +48,18 @@ A \code{\link[ggplot2]{ggplot}} object
 Creates sunburst diagram using ggplot2.
 }
 \examples{
-# example code
+plotdata <- data.frame(
+    id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
+    x=0.5,
+    y=seq.int(5),
+    xmin=0,
+    ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
+    xmax=1,
+    ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
+    fill=seq(1, 5),
+    label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
+        'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+)
+ggSunburst(plotdata, end=pi/2)
 
 }
