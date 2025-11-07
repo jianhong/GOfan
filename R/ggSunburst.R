@@ -691,30 +691,30 @@ fix_fontsize <- function(data, labels, size.unit,
 #' only after transformation that these aesthetics are applied.
 #'
 #' @section Aesthetics:
-#' `geom_<name>()` understands the following aesthetics:
+#' `geom_sunburst` understands the following aesthetics:
 #' \itemize{
-#'   \item `x`
-#'   \item `y`
-#'   \item `xmin`
-#'   \item `ymin`
-#'   \item `xmax`
-#'   \item `ymax`
-#'   \item `width`
-#'   \item `height`
+#'   \item `x` define the locations of x.
+#'   \item `y` define the locations of y.
+#'   \item `xmin` define the bottom of rectangle
+#'   \item `ymin` define the left of rectangle
+#'   \item `xmax` define the top of rectangle
+#'   \item `ymax` define the right of rectangle
+#'   \item `width` define the width of rectangle
+#'   \item `height` define the height of rectangle
 #'   \item `colour` rectangle border color
 #'   \item `fill` rectangle fill color
 #'   \item `alpha` rectangle fill alpha and font alpha
 #'   \item `linewidth` line width for rectangle
-#'   \item `linetype`
-#'   \item `label`
+#'   \item `linetype` line type for rectangle
+#'   \item `label` label text
 #'   \item `angle` label angle
 #'   \item `family` label family
 #'   \item `size` label default size
 #'   \item `fontcolour` font color
-#'   \item `fontface`
+#'   \item `fontface` font face
 #'   \item `lineheight` font line height
-#'   \item `hjust`
-#'   \item `vjust`
+#'   \item `hjust` horizontal just for label
+#'   \item `vjust` vertical just for label
 #'   \item `rotate90` Rotate the labels 90 degree or not. Default NULL will try
 #'   to auto rotate the labels according the space.
 #'   \item `sub_rect` A proportional sub-rectangle representing a share of the

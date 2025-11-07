@@ -138,30 +138,30 @@ only after transformation that these aesthetics are applied.
 }
 \section{Aesthetics}{
 
-\verb{geom_<name>()} understands the following aesthetics:
+\code{geom_sunburst} understands the following aesthetics:
 \itemize{
-\item \code{x}
-\item \code{y}
-\item \code{xmin}
-\item \code{ymin}
-\item \code{xmax}
-\item \code{ymax}
-\item \code{width}
-\item \code{height}
+\item \code{x} define the locations of x.
+\item \code{y} define the locations of y.
+\item \code{xmin} define the bottom of rectangle
+\item \code{ymin} define the left of rectangle
+\item \code{xmax} define the top of rectangle
+\item \code{ymax} define the right of rectangle
+\item \code{width} define the width of rectangle
+\item \code{height} define the height of rectangle
 \item \code{colour} rectangle border color
 \item \code{fill} rectangle fill color
 \item \code{alpha} rectangle fill alpha and font alpha
 \item \code{linewidth} line width for rectangle
-\item \code{linetype}
-\item \code{label}
+\item \code{linetype} line type for rectangle
+\item \code{label} label text
 \item \code{angle} label angle
 \item \code{family} label family
 \item \code{size} label default size
 \item \code{fontcolour} font color
-\item \code{fontface}
+\item \code{fontface} font face
 \item \code{lineheight} font line height
-\item \code{hjust}
-\item \code{vjust}
+\item \code{hjust} horizontal just for label
+\item \code{vjust} vertical just for label
 \item \code{rotate90} Rotate the labels 90 degree or not. Default NULL will try
 to auto rotate the labels according the space.
 \item \code{sub_rect} A proportional sub-rectangle representing a share of the
