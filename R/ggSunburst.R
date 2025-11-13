@@ -682,7 +682,7 @@ fix_fontsize <- function(data, labels, size.unit,
 #' @param size.unit How the `size` aesthetic is interpreted: as millimetres
 #'   (`"mm"`, default), points (`"pt"`), centimetres (`"cm"`), inches (`"in"`),
 #'   or picas (`"pc"`).
-
+#' @return A \code{\link[ggplot2]{ggplot}} object
 #' @export
 #'
 #' @details

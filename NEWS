@@ -1,3 +1,7 @@
+Changes in version 0.99.1
+
+  o Add returning value section for geom_sunburst.Rd.
+
 Changes in version 0.99.0
 
   o submit to Bioconductor.
