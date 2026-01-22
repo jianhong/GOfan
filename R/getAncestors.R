@@ -8,19 +8,22 @@
 #' @importFrom GO.db GOCCANCESTOR
 #' @export
 #' @examples
-#' ids <- c("GO:0099536", "GO:0099537", "GO:0007268",
-#'          "GO:0098916", "GO:0050804", "GO:0099177")
-#' df <- getAncestors_df(ids, onto="BP")
+#' ids <- c(
+#'     "GO:0099536", "GO:0099537", "GO:0007268",
+#'     "GO:0098916", "GO:0050804", "GO:0099177"
+#' )
+#' df <- getAncestors(ids, onto = "BP")
 #' head(df)
-getAncestors_df <- function(GO_IDs, onto = c("BP", "CC", "MF")) {
+getAncestors <- function(GO_IDs, onto = c("BP", "CC", "MF")) {
     onto <- match.arg(onto)
     is_GO_IDs(GO_IDs)
 
     # Choose ontology environment only once
     go_env <- switch(onto,
-                     MF = GOMFANCESTOR,
-                     BP = GOBPANCESTOR,
-                     CC = GOCCANCESTOR)
+        MF = GOMFANCESTOR,
+        BP = GOBPANCESTOR,
+        CC = GOCCANCESTOR
+    )
 
     # Cache to store previously computed ancestors
     cache <- new.env(parent = emptyenv())
@@ -38,7 +41,8 @@ getAncestors_df <- function(GO_IDs, onto = c("BP", "CC", "MF")) {
             res <- character(0)
         } else {
             res <- unique(c(res, unlist(lapply(res, get_anc),
-                                        use.names = FALSE)))
+                use.names = FALSE
+            )))
         }
         assign(id, res, envir = cache)
         return(res)
@@ -48,9 +52,11 @@ getAncestors_df <- function(GO_IDs, onto = c("BP", "CC", "MF")) {
     df_list <- lapply(GO_IDs, function(id) {
         ancestors <- get_anc(id)
         if (length(ancestors) > 0) {
-            data.frame(ancestor = ancestors,
-                       offspring = id,
-                       stringsAsFactors = FALSE)
+            data.frame(
+                ancestor = ancestors,
+                offspring = id,
+                stringsAsFactors = FALSE
+            )
         } else {
             NULL
         }

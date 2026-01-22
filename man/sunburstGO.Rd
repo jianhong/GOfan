@@ -63,8 +63,8 @@ Sunburst plot for enriched GO term
 \examples{
 library(org.Dr.eg.db)
 df <- data.frame(
-    ID=c("GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
-    qvalue=-10*log10(runif(4, max=0.05))
+    ID = c("GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
+    qvalue = -10 * log10(runif(4, max = 0.05))
 )
 sunburstGO(df, org.Dr.eg.db)
 }

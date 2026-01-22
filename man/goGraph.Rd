@@ -7,7 +7,7 @@
 goGraph(df)
 }
 \arguments{
-\item{df}{A data frame, output of \link{getAncestors_df}}
+\item{df}{A data frame, output of \link{getAncestors}}
 }
 \value{
 A igraph graph.
@@ -17,8 +17,8 @@ This function creates an igraph graph from one data frames containing
 the ancestor and offspring information.
 }
 \examples{
-goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916","GO:0050804")
-anc <- getAncestors_df(goids, onto='BP')
+goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916", "GO:0050804")
+anc <- getAncestors(goids, onto = "BP")
 goGraph(anc)
 
 }

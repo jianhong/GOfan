@@ -3,9 +3,9 @@ test_that("GeneRatio parsing works not correctly", {
     parsed <- GOfan:::parse_ratio(test_ratios)
 
     expect_equal(length(parsed), 3)
-    expect_true(parsed[1]==0.05)
-    expect_true(parsed[2]==0.05)
-    expect_true(parsed[3]==0.1)
+    expect_true(parsed[1] == 0.05)
+    expect_true(parsed[2] == 0.05)
+    expect_true(parsed[3] == 0.1)
 
     # Test invalid ratios
     expect_error(GOfan:::parse_ratio("invalid"))
@@ -14,15 +14,15 @@ test_that("GeneRatio parsing works not correctly", {
 
 test_that("color2gray works not correctly", {
     a <- GOfan:::color2gray(1:7, 0)
-    expect_true(a[1]=='#000000')
-    expect_true(a[7]=='#FFFFFF')
-    a <- do.call(rbind, strsplit(sub('#', '', a), ''))
+    expect_true(a[1] == "#000000")
+    expect_true(a[7] == "#FFFFFF")
+    a <- do.call(rbind, strsplit(sub("#", "", a), ""))
     expect_equal(a[, 1], a[, 3])
     expect_equal(a[, 1], a[, 5])
     expect_equal(a[, 2], a[, 4])
     expect_equal(a[, 2], a[, 6])
     b <- GOfan:::color2gray(1:7, 0.5)
-    expect_true(b[1]=='#808080')
+    expect_true(b[1] == "#808080")
 })
 
 test_that("rescale works not correctly", {
@@ -93,7 +93,9 @@ test_that("rescale works not correctly", {
 
     # Linear map handles very small ranges
     expect_equal(GOfan:::rescale(0.00005, from = c(0, 0.0001), to = c(0, 1)),
-                 0.5, tolerance = 1e-10)
+        0.5,
+        tolerance = 1e-10
+    )
 
     # Linear map handles very large ranges, Map from [0, 1e10] to [0, 1]
     expect_equal(GOfan:::rescale(5e9, from = c(0, 1e10), to = c(0, 1)), 0.5)
@@ -126,31 +128,46 @@ test_that("rescale works not correctly", {
 
     # Values very close to boundaries
     expect_equal(GOfan:::rescale(1e-10, from = c(0, 10), to = c(0, 100)),
-                 1e-9, tolerance = 1e-15)
+        1e-9,
+        tolerance = 1e-15
+    )
     expect_equal(GOfan:::rescale(10 - 1e-10, from = c(0, 10), to = c(0, 100)),
-                 100 - 1e-9, tolerance = 1e-15)
+        100 - 1e-9,
+        tolerance = 1e-15
+    )
 
     # Missing arguments
     expect_error(GOfan:::rescale(), "required")
-    expect_error(GOfan:::rescale(5), "required")
-    expect_error(GOfan:::rescale(5, from = c(0, 10)), "required")
+    expect_warning(GOfan:::rescale(5), "range has zero width")
 
     # Non-numeric inputs
-    expect_error(GOfan:::rescale("5", from = c(0, 10), to = c(0, 100)),
-                 "numeric")
-    expect_error(GOfan:::rescale(5, from = c("0", "10"), to = c(0, 100)),
-                 "numeric")
-    expect_error(GOfan:::rescale(5, from = c(0, 10), to = c("0", "100")),
-                 "numeric")
+    expect_error(
+        GOfan:::rescale("5", from = c(0, 10), to = c(0, 100)),
+        "numeric"
+    )
+    expect_error(
+        GOfan:::rescale(5, from = c("0", "10"), to = c(0, 100)),
+        "numeric"
+    )
+    expect_error(
+        GOfan:::rescale(5, from = c(0, 10), to = c("0", "100")),
+        "numeric"
+    )
 
     # Wrong length ranges
-    expect_error(GOfan:::rescale(5, from = c(0), to = c(0, 100)),
-                 "length 2")
-    expect_error(GOfan:::rescale(5, from = c(0, 5, 10), to = c(0, 100)),
-                 "length 2")
+    expect_error(
+        GOfan:::rescale(5, from = c(0), to = c(0, 100)),
+        "length 2"
+    )
+    expect_error(
+        GOfan:::rescale(5, from = c(0, 5, 10), to = c(0, 100)),
+        "length 2"
+    )
     expect_error(GOfan:::rescale(5, from = c(0, 10), to = c(0)), "length 2")
-    expect_error(GOfan:::rescale(5, from = c(0, 10), to = c(0, 50, 100)),
-                 "length 2")
+    expect_error(
+        GOfan:::rescale(5, from = c(0, 10), to = c(0, 50, 100)),
+        "length 2"
+    )
 
     # NA in x should produce NA in output
     result <- GOfan:::rescale(c(0, NA, 10), from = c(0, 10), to = c(0, 100))
@@ -213,7 +230,7 @@ test_that("jaccard works not correctly", {
     expect_equal(GOfan:::jaccard(c(1), c(2)), 0)
 
     # One set has one element, other has multiple
-    expect_equal(GOfan:::jaccard(c(1), c(1, 2, 3)), 1/3)
+    expect_equal(GOfan:::jaccard(c(1), c(1, 2, 3)), 1 / 3)
 
     # NULL
     expect_equal(GOfan:::jaccard(NULL, c(1, 2, 3)), 0)

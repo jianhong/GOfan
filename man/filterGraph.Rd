@@ -35,6 +35,6 @@ Cut the input igraph object by the distances from the root.
 \examples{
 library(igraph)
 g_gnp <- sample_gnp(n = 25, p = 0.05)
-filterGraph(g_gnp, leaveTerms=V(g_gnp), cutoff=2)
+filterGraph(g_gnp, leaveTerms = V(g_gnp), cutoff = 2)
 
 }

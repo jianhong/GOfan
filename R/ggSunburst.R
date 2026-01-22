@@ -2,7 +2,6 @@
 #'
 #' Creates sunburst diagram using ggplot2.
 #'
-#' @importFrom ggplot2 ggplot aes geom_rect theme_minimal theme element_blank geom_text .data xlab ylab coord_radial labs
 #' @export
 #' @param plotdata A data.frame.
 #' @param fontsize Default fontsize.
@@ -19,127 +18,148 @@
 #'  If FALSE, the default, limits are taken directly from the scale.
 #' @param ... Other parameters (except theta) passed to \link[ggplot2]{coord_radial}.
 #' @return A \code{\link[ggplot2]{ggplot}} object
+#' @import ggplot2
 #' @examples
 #' plotdata <- data.frame(
-#'     id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
-#'     x=0.5,
-#'     y=seq.int(5),
-#'     xmin=0,
-#'     ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
-#'     xmax=1,
-#'     ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
-#'     fill=seq(1, 5),
-#'     label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
-#'         'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+#'     id = c("GO:0023052", "GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
+#'     x = 0.5,
+#'     y = seq.int(5),
+#'     xmin = 0,
+#'     ymin = c(0.5, 1.5, 2.5, 3.5, 4.5),
+#'     xmax = 1,
+#'     ymax = c(1.5, 2.5, 3.5, 4.5, 5.5),
+#'     fill = seq(1, 5),
+#'     label = c(
+#'         "signaling", "cell-cell signaling", "synaptic signaling",
+#'         "trans-synaptic signaling", "anterograde trans-synaptic signaling"
+#'     )
 #' )
-#' ggSunburst(plotdata, end=pi/2)
+#' ggSunburst(plotdata, end = pi / 2)
 #'
-ggSunburst <- function(plotdata, fontsize=1, rotate90=NULL,
-                       maxCharacters=30,
-                       legendTitle='color',
+ggSunburst <- function(plotdata, fontsize = 1, rotate90 = NULL,
+                       maxCharacters = 30,
+                       legendTitle = "color",
                        start = 0, end = NULL,
-                       clip = "off", expand = FALSE, ...){
+                       clip = "off", expand = FALSE, ...) {
     # Calculate the angular position in polar coordinates (midpoint angle)
-    TWO_PI <- 2*pi
-    if(is.null(end)){
+    TWO_PI <- 2 * pi
+    if (is.null(end)) {
         end <- start + TWO_PI
     }
-    if(end<start){
-        stop('end must greater than start.')
+    if (end < start) {
+        stop("'end' must greater than 'start'.")
     }
-    if(end-start>TWO_PI){
-        stop('There are overlaps of the plot. ',
-             'Please set the difference of start and end within two PI.')
+    if (end - start > TWO_PI) {
+        stop(
+            "There are overlaps of the plot. ",
+            "Please set the difference of start and end within two PI."
+        )
     }
     ## current, can only handle default expansion(mult=0.05, add=0)
     stopifnot(is.logical(expand))
 
-    compute_angle <- function(p, start=0, end=2*pi, expand=FALSE){
+    compute_angle <- function(p, start = 0, end = 2 * pi, expand = FALSE) {
         expansion <- 0.05
-        if(expand){
-            p <- p * (1-2*expansion) + expansion
+        if (expand) {
+            p <- p * (1 - 2 * expansion) + expansion
         }
-        p <- p *(end - start)/TWO_PI + start/TWO_PI
+        p <- p * (end - start) / TWO_PI + start / TWO_PI
         # p is percentage value [0, 1]
         ifelse(p < 0.5,
-               (180 - (p/0.5) * 180) - 90,
-               90 - (p-0.5)/0.5 * 180)
+            (180 - (p / 0.5) * 180) - 90,
+            90 - (p - 0.5) / 0.5 * 180
+        )
     }
-    if(maxCharacters<4) {
-        stop("maxCharacters should not be smaller than 4")
+    if (maxCharacters < 4) {
+        stop("'maxCharacters' should not be smaller than 4")
     }
     ## safe substring
-    plotdata$label[nchar(plotdata$label)>maxCharacters] <-
-        gsub(paste0('^(.{', maxCharacters - 3, '}.*?)\\s+.*$'), '\\1...',
-             plotdata$label[nchar(plotdata$label)>maxCharacters])
+    plotdata$label[nchar(plotdata$label) > maxCharacters] <-
+        gsub(
+            paste0("^(.{", maxCharacters - 3, "}.*?)\\s+.*$"), "\\1...",
+            plotdata$label[nchar(plotdata$label) > maxCharacters]
+        )
 
-    plotdata$polar_angle <- compute_angle(plotdata$x /max(plotdata$xmax),
-                                          start=start, end=end,
-                                          expand=expand)
-    if(!is.null(rotate90)){
-        if(length(rotate90)!=nrow(plotdata)){
-            if(length(rotate90)==1){
+    plotdata$polar_angle <- compute_angle(plotdata$x / max(plotdata$xmax),
+        start = start, end = end,
+        expand = expand
+    )
+    if (!is.null(rotate90)) {
+        if (length(rotate90) != nrow(plotdata)) {
+            if (length(rotate90) == 1) {
                 plotdata$rotate90 <- rotate90
-            }else{
-                stop('the length of rotate90 is not equal to the number of data')
+            } else {
+                stop("the length of 'rotate90' ",
+                     "is not equal to the number of data")
             }
-        }else{
+        } else {
             plotdata$rotate90 <- rotate90
         }
-    }else{
+    } else {
         plotdata$rotate90 <- NA
     }
-    if(length(plotdata$sub_rect)!=nrow(plotdata)){
+    if (length(plotdata$sub_rect) != nrow(plotdata)) {
         plotdata$sub_rect <- 1
     }
 
-    if(is.numeric(fontsize)){
-        fontsize <- fontsize * sqrt((end-start)/TWO_PI)
-        g <- ggplot(plotdata, aes(x=.data$x, y=.data$y,
-                                  xmin=.data$xmin, ymin=.data$ymin,
-                                  xmax=.data$xmax, ymax=.data$ymax,
-                                  fill=.data$fill,
-                                  label=.data$label,
-                                  angle = ifelse(.data$polar_angle > 90 &
-                                                     .data$polar_angle < 270,
-                                                 .data$polar_angle + 180,
-                                                 .data$polar_angle),
-                                  rotate90=.data$rotate90,
-                                  sub_rect=.data$sub_rect)) +
-            geom_sunburst(size=fontsize)
-    }else{
-        if(is.character(fontsize)){
-            if(fontsize %in% colnames(plotdata)){
+    if (is.numeric(fontsize)) {
+        fontsize <- fontsize * sqrt((end - start) / TWO_PI)
+        g <- ggplot(plotdata, aes(
+            x = .data$x, y = .data$y,
+            xmin = .data$xmin, ymin = .data$ymin,
+            xmax = .data$xmax, ymax = .data$ymax,
+            fill = .data$fill,
+            label = .data$label,
+            angle = ifelse(.data$polar_angle > 90 &
+                .data$polar_angle < 270,
+            .data$polar_angle + 180,
+            .data$polar_angle
+            ),
+            rotate90 = .data$rotate90,
+            sub_rect = .data$sub_rect
+        )) +
+            geom_sunburst(size = fontsize)
+    } else {
+        if (is.character(fontsize)) {
+            if (fontsize %in% colnames(plotdata)) {
                 plotdata[is.na(plotdata[, fontsize]), fontsize] <-
                     min(plotdata[, fontsize], na.rm = TRUE)
-                g <- ggplot(plotdata,
-                            aes(x=.data$x, y=.data$y,
-                                xmin=.data$xmin, ymin=.data$ymin,
-                                xmax=.data$xmax, ymax=.data$ymax,
-                                fill=.data$fill,
-                                label=.data$label,
-                                angle = ifelse(.data$polar_angle > 90 &
-                                                   .data$polar_angle < 270,
-                                               .data$polar_angle + 180,
-                                               .data$polar_angle),
-                                rotate90=.data$rotate90,
-                                sub_rect=.data$sub_rect)) +
-                    geom_sunburst(aes(size=.data[[fontsize]]))
-            }else{
-                stop('fontsize is not a column in plotdata.')
+                g <- ggplot(
+                    plotdata,
+                    aes(
+                        x = .data$x, y = .data$y,
+                        xmin = .data$xmin, ymin = .data$ymin,
+                        xmax = .data$xmax, ymax = .data$ymax,
+                        fill = .data$fill,
+                        label = .data$label,
+                        angle = ifelse(.data$polar_angle > 90 &
+                            .data$polar_angle < 270,
+                        .data$polar_angle + 180,
+                        .data$polar_angle
+                        ),
+                        rotate90 = .data$rotate90,
+                        sub_rect = .data$sub_rect
+                    )
+                ) +
+                    geom_sunburst(aes(size = .data[[fontsize]]))
+            } else {
+                stop("'fontsize' is not a column in plotdata.")
             }
-        }else{
-            stop('Can not handel fontsize.')
+        } else {
+            stop("Can not handel 'fontsize'.")
         }
     }
-    g + coord_radial(theta='x', start = start, end=end,
-                     clip=clip, expand = expand, ...) +
-        xlab('') + ylab('') + labs(fill=legendTitle[1]) +
-        theme_minimal()  +
+    g + coord_radial(
+        theta = "x", start = start, end = end,
+        clip = clip, expand = expand, ...
+    ) +
+        xlab("") + ylab("") + labs(fill = legendTitle[1]) +
+        theme_minimal() +
         theme(
             axis.text.x = element_blank(),
             axis.text.y = element_blank(),
-            panel.grid = element_blank())
+            panel.grid = element_blank()
+        )
 }
 
 #' Geom for sunburst
@@ -148,7 +168,6 @@ ggSunburst <- function(plotdata, fontsize=1, rotate90=NULL,
 #' into the rectangle.
 #' @noRd
 #' @importFrom vctrs vec_interleave
-#' @importFrom ggplot2 ggproto from_theme aes draw_key_polygon Geom make_constructor fill_alpha layer GeomPolygon gg_par
 #' @importFrom scales col_mix alpha
 #' @importFrom grid grobName textGrob gList rectGrob
 GeomSunburst <- ggproto(
@@ -157,7 +176,7 @@ GeomSunburst <- ggproto(
         label = NA,
         family = from_theme(family),
         size = from_theme(fontsize),
-        fontcolour = 'black', # font color
+        fontcolour = "black", # font color
         colour = from_theme(colour %||% NA), # rect border color
         fill = from_theme(fill %||% col_mix(ink, paper, 0.35)), # rect fill color
         linewidth = from_theme(borderwidth),
@@ -172,17 +191,17 @@ GeomSunburst <- ggproto(
         sub_rect = 1
     ),
     required_aes = c("x|width|xmin|xmax", "y|height|ymin|ymax"),
-    setup_data = function(self, data, params){
+    setup_data = function(self, data, params) {
         # handles for text label
         names(data) <- rename_aes_fontcolour(names(data))
         lab <- data$label
 
-        if(all(c('x', 'y', 'xmin', 'ymin', 'xmax', 'ymax') %in% names(data))){
+        if (all(c("x", "y", "xmin", "ymin", "xmax", "ymax") %in% names(data))) {
             return(data)
         }
         # Fill in missing aesthetics from parameters
         required <- strsplit(self$required_aes, "|", fixed = TRUE)
-        missing  <- setdiff(unlist(required), names(data))
+        missing <- setdiff(unlist(required), names(data))
         default <- params[intersect(missing, names(params))]
         data[names(default)] <- default
 
@@ -206,7 +225,7 @@ GeomSunburst <- ggproto(
         }
         # check sub_rect
         ## it should be a number no greater than 1 and no less than 0
-        if(any(data$sub_rect>1 | data$sub_rect<0)){
+        if (any(data$sub_rect > 1 | data$sub_rect < 0)) {
             data$sub_rect <- rescale(data$sub_rect)
         }
         data$sub_rect[is.na(data$sub_rect)] <- 0
@@ -235,10 +254,14 @@ GeomSunburst <- ggproto(
             index <- rep(seq_len(nrow(data)), each = 4)
 
             new <- data[index, aesthetics, drop = FALSE]
-            new$x <- vctrs::vec_interleave(data$xmin, data$xmax,
-                                           data$xmax, data$xmin)
-            new$y <- vctrs::vec_interleave(data$ymax, data$ymax,
-                                           data$ymin, data$ymin)
+            new$x <- vctrs::vec_interleave(
+                data$xmin, data$xmax,
+                data$xmax, data$xmin
+            )
+            new$y <- vctrs::vec_interleave(
+                data$ymax, data$ymax,
+                data$ymin, data$ymin
+            )
             new$group <- index
             new_top_layer <- new
             new$alpha <- new$alpha * 0.5 ## background
@@ -248,38 +271,42 @@ GeomSunburst <- ggproto(
                 new, panel_params, coord,
                 lineend = lineend, linejoin = linejoin
             )
-            grob_rect$name <- grobName(grob_rect, 'geom_rect')
+            grob_rect$name <- grobName(grob_rect, "geom_rect")
 
             ## second layer of rect
             ## map to the alpha,
             ## full Y is 100%
-            fixY <- function(y, prop){
-                floor(y) + (y-floor(y))*prop
+            fixY <- function(y, prop) {
+                floor(y) + (y - floor(y)) * prop
             }
             new_top_layer$y <- vctrs::vec_interleave(
                 fixY(data$ymax, data$sub_rect),
                 fixY(data$ymax, data$sub_rect),
-                data$ymin, data$ymin)
+                data$ymin, data$ymin
+            )
             new_top_layer$colour <- rep(NA, nrow(new_top_layer))
             grob_rect_top_layer <- GeomPolygon$draw_panel(
                 new_top_layer, panel_params, coord,
                 lineend = lineend, linejoin = linejoin
             )
-            grob_rect_top_layer$name <- grobName(grob_rect, 'geom_top_rect')
+            grob_rect_top_layer$name <- grobName(grob_rect, "geom_top_rect")
 
             ## adjust for polar
-            fontsize_factors <- 2*data$y/(max(data$ymax)-min(data$ymin))
+            fontsize_factors <- 2 * data$y / (max(data$ymax) - min(data$ymin))
             data <- coord$transform(data, panel_params)
 
             grob_text <- textGrob(
                 data$wrapped_text,
-                data$x, data$y, default.units = "native",
+                data$x, data$y,
+                default.units = "native",
                 hjust = data$hjust, vjust = data$vjust,
                 rot = ifelse(data$rotate90,
-                             ifelse(## not validated, need more examples
-                                 data$angle %% 360<90,
-                                 data$angle-90,data$angle+90),
-                             data$angle),
+                    ifelse( ## not validated, need more examples
+                        data$angle %% 360 < 90,
+                        data$angle - 90, data$angle + 90
+                    ),
+                    data$angle
+                ),
                 gp = gg_par(
                     col = alpha(data$fontcolour, data$alpha),
                     fontsize = data$size * fontsize_factors,
@@ -313,12 +340,13 @@ GeomSunburst <- ggproto(
                 )
             )
 
-            grob_rect$name <- grobName(grob_rect, 'geom_rect')
+            grob_rect$name <- grobName(grob_rect, "geom_rect")
 
             data <- coord$transform(data, panel_params)
             grob_text <- textGrob(
                 data$wrapped_text,
-                data$x, data$y, default.units = "native",
+                data$x, data$y,
+                default.units = "native",
                 hjust = data$hjust, vjust = data$vjust,
                 rot = ifelse(data$rotate90, 0, 90),
                 gp = gg_par(
@@ -334,22 +362,22 @@ GeomSunburst <- ggproto(
             gList(grob_rect, grob_text)
         }
     },
-
     draw_key = draw_key_polygon,
-
-    rename_size = TRUE)
+    rename_size = TRUE
+)
 
 resolve_rect <- function(min = NULL, max = NULL, center = NULL, length = NULL,
                          fun, type) {
     absent <- c(is.null(min), is.null(max), is.null(center), is.null(length))
     if (sum(absent) > 2) {
-        missing <- switch(
-            type,
+        missing <- switch(type,
             x = "xmin, xmax, x, width",
             y = "ymin, ymax, y, height"
         )
-        stop('geom_sunburst requires two of the following aesthetics: \\',
-             missing)
+        stop(
+            "geom_sunburst requires two of the following aesthetics: \\",
+            missing
+        )
     }
 
     if (absent[1] && absent[2]) {
@@ -374,25 +402,25 @@ resolve_rect <- function(min = NULL, max = NULL, center = NULL, length = NULL,
     list(min = min, max = max)
 }
 
-rename_aes_fontcolour <- function(x){
+rename_aes_fontcolour <- function(x) {
     # Convert alternate names to canonical form
-    nN <- 'fontcolour'
-    if(c('fontcolor' %in% x)){
-        x[x %in% 'fontcolor'] <- nN
+    nN <- "fontcolour"
+    if (c("fontcolor" %in% x)) {
+        x[x %in% "fontcolor"] <- nN
         return(x)
     }
-    if(c('font_color' %in% x)){
-        x[x %in% 'fontcolor'] <- nN
+    if (c("font_color" %in% x)) {
+        x[x %in% "fontcolor"] <- nN
         return(x)
     }
-    if(c('font.colour' %in% x)){
-        x[x %in% 'fontcolor'] <- nN
+    if (c("font.colour" %in% x)) {
+        x[x %in% "fontcolor"] <- nN
         return(x)
     }
     return(x)
 }
 
-fix_linewidth <- function (data, name) {
+fix_linewidth <- function(data, name) {
     if (is.null(data$linewidth) && !is.null(data$size)) {
         data$linewidth <- data$size
     }
@@ -401,70 +429,76 @@ fix_linewidth <- function (data, name) {
 
 #' @importFrom vctrs obj_is_list
 #' @importFrom rlang inject
-validate_labels <- function (labels) {
+validate_labels <- function(labels) {
     if (!vctrs::obj_is_list(labels)) {
         return(labels)
     }
     labels[lengths(labels) == 0L] <- ""
     if (any(vapply(labels, is.language, logical(1)))) {
         inject(expression(!!!labels))
-    }
-    else {
+    } else {
         unlist(labels)
     }
 }
 
-#' @importFrom ggplot2 .pt
 #' @importFrom rlang arg_match0
-resolve_text_unit <- function (unit) {
+resolve_text_unit <- function(unit) {
     unit <- arg_match0(unit, c("mm", "pt", "cm", "in", "pc"))
-    switch(unit, mm = .pt, cm = .pt * 10, `in` = 72.27, pc = 12,
-           1)
+    switch(unit,
+        mm = .pt,
+        cm = .pt * 10,
+        `in` = 72.27,
+        pc = 12,
+        1
+    )
 }
 
-just_dir <- function (x, tol = 0.001) {
+just_dir <- function(x, tol = 0.001) {
     out <- rep(2L, length(x))
     out[x < 0.5 - tol] <- 1L
     out[x > 0.5 + tol] <- 3L
     out
 }
 
-compute_just <- function (just, a = 0.5, b = a, angle = 0) {
+compute_just <- function(just, a = 0.5, b = a, angle = 0) {
     if (!is.character(just)) {
         return(just)
     }
     if (any(grepl("outward|inward", just))) {
-        angle <- angle%%360
+        angle <- angle %% 360
         angle <- ifelse(angle > 180, angle - 360, angle)
         angle <- ifelse(angle < -180, angle + 360, angle)
         rotated_forward <- grepl("outward|inward", just) & (angle >
-                                                                45 & angle < 135)
+            45 & angle < 135)
         rotated_backwards <- grepl("outward|inward", just) &
             (angle < -45 & angle > -135)
         ab <- ifelse(rotated_forward | rotated_backwards, b,
-                     a)
+            a
+        )
         just_swap <- rotated_backwards | abs(angle) > 135
         inward <- (just == "inward" & !just_swap | just == "outward" &
-                       just_swap)
+            just_swap)
         just[inward] <- c("left", "middle", "right")[just_dir(ab[inward])]
         outward <- (just == "outward" & !just_swap) | (just ==
-                                                           "inward" & just_swap)
+            "inward" & just_swap)
         just[outward] <- c("right", "middle", "left")[just_dir(ab[outward])]
     }
-    unname(c(left = 0, center = 0.5, right = 1, bottom = 0, middle = 0.5,
-             top = 1)[just])
+    unname(c(
+        left = 0, center = 0.5, right = 1, bottom = 0, middle = 0.5,
+        top = 1
+    )[just])
 }
 
 #' @importFrom graphics strwidth strheight
 #' @importFrom grid convertWidth convertHeight unit
 # Function to split text into lines and calculate dimensions
-get_text_dimensions <- function(text, cex = 1, sep = "\n", lineheight=1.2) {
+get_text_dimensions <- function(text, cex = 1, sep = "\n", lineheight = 1.2) {
     lines <- strsplit(text, sep, fixed = TRUE)[[1]]
     widths <- strwidth(lines, units = "inches", cex = cex)
     heights <- strheight(lines, units = "inches", cex = cex)
 
     list(
-        width = max(widths),  # widest line
+        width = max(widths), # widest line
         height = sum(heights) * lineheight, # total height
         n_lines = length(lines)
     )
@@ -479,7 +513,9 @@ find_optimal_fontsize <- function(label,
     words <- strsplit(label, "\\s+")[[1]]
     n_words <- length(words)
 
-    if (n_words == 0) return(list(text = "", size = min_size))
+    if (n_words == 0) {
+        return(list(text = "", size = min_size))
+    }
     if (n_words == 1) {
         # Single word - no wrapping possible
         w <- strwidth(label, units = "inches", cex = 1)
@@ -492,7 +528,7 @@ find_optimal_fontsize <- function(label,
     best_text <- label
 
     # Try different numbers of lines (1 to n_words)
-    for (n_lines in seq.int(min(n_words, 3))) {  # limit to 4 lines max
+    for (n_lines in seq.int(min(n_words, 3))) { # limit to 4 lines max
 
         # Try to distribute words evenly across lines
         words_per_line <- ceiling(n_words / n_lines)
@@ -508,8 +544,10 @@ find_optimal_fontsize <- function(label,
         wrapped_text <- paste(lines, collapse = "\n")
 
         # Calculate dimensions at size = 1
-        dims <- get_text_dimensions(wrapped_text, cex = 1,
-                                    lineheight=lineheight)
+        dims <- get_text_dimensions(wrapped_text,
+            cex = 1,
+            lineheight = lineheight
+        )
         # Calculate maximum size that fits
         size_width <- rect_width / dims$width
         size_height <- rect_height / dims$height
@@ -545,9 +583,11 @@ find_optimal_fontsize <- function(label,
     }
 
     wrapped_text <- paste(lines, collapse = "\n")
-    dims <- get_text_dimensions(wrapped_text, cex = 1, lineheight=lineheight)
-    size <- min(rect_width / dims$width,
-                rect_height / dims$height)
+    dims <- get_text_dimensions(wrapped_text, cex = 1, lineheight = lineheight)
+    size <- min(
+        rect_width / dims$width,
+        rect_height / dims$height
+    )
 
     if (size > best_size) {
         best_size <- size
@@ -558,22 +598,26 @@ find_optimal_fontsize <- function(label,
 }
 
 fix_fontsize <- function(data, labels, size.unit,
-                         lineheight=1.2,
-                         margin_factor = 1, min_size = 0.1){
+                         lineheight = 1.2,
+                         margin_factor = 1, min_size = 0.1) {
     # Calculate available space in rectangles (in inches)
-    rect_widths <- grid::convertWidth(unit((data$xmax - data$xmin) *
-                                               margin_factor/max(data$xmax),
-                                           'npc'), unitTo = "inches")
-    rect_heights <- grid::convertHeight(unit((data$ymax - data$ymin) *
-                                                 margin_factor/max(data$ymax),
-                                             'npc'), unitTo = "inches")
+    rect_widths <- grid::convertWidth(unit(
+        (data$xmax - data$xmin) *
+            margin_factor / max(data$xmax),
+        "npc"
+    ), unitTo = "inches")
+    rect_heights <- grid::convertHeight(unit(
+        (data$ymax - data$ymin) *
+            margin_factor / max(data$ymax),
+        "npc"
+    ), unitTo = "inches")
     w <- as.numeric(rect_heights) ## switch, because of the coordinates switched
     h <- as.numeric(rect_widths)
     results <- mapply(
         find_optimal_fontsize,
         label = labels,
-        rect_width = ifelse(w>h, w, h),
-        rect_height = ifelse(w>h, h, w),
+        rect_width = ifelse(w > h, w, h),
+        rect_height = ifelse(w > h, h, w),
         lineheight = data$lineheight,
         min_size = min_size,
         SIMPLIFY = FALSE
@@ -581,11 +625,11 @@ fix_fontsize <- function(data, labels, size.unit,
 
     size <- vapply(results, function(x) as.numeric(x$size), numeric(1L))
     data$wrapped_text <- vapply(results, function(x) x$text, character(1L))
-    if(length(data$rotate90)!=nrow(data) || any(is.na(data$rotate90))){
-        data$rotate90 <- w<h
+    if (length(data$rotate90) != nrow(data) || any(is.na(data$rotate90))) {
+        data$rotate90 <- w < h
     }
-    if(all(data$size==data$size[1])){
-        data$size <- data$size * size  * size.unit
+    if (all(data$size == data$size[1])) {
+        data$size <- data$size * size * size.unit
     }
     return(data)
 }
@@ -723,19 +767,24 @@ fix_fontsize <- function(data, labels, size.unit,
 #'
 #' @examples
 #' plotdata <- data.frame(
-#'     id=c('GO:0023052', 'GO:0007267', 'GO:0099536', 'GO:0099537', 'GO:0098916'),
-#'     x=0.5,
-#'     y=seq.int(5),
-#'     xmin=0,
-#'     ymin=c(0.5, 1.5, 2.5, 3.5, 4.5),
-#'     xmax=1,
-#'     ymax=c(1.5, 2.5, 3.5, 4.5, 5.5),
-#'     fill=seq(1, 5),
-#'     label=c('signaling', 'cell-cell signaling', 'synaptic signaling',
-#'         'trans-synaptic signaling', 'anterograde trans-synaptic signaling')
+#'     id = c("GO:0023052", "GO:0007267", "GO:0099536", "GO:0099537", "GO:0098916"),
+#'     x = 0.5,
+#'     y = seq.int(5),
+#'     xmin = 0,
+#'     ymin = c(0.5, 1.5, 2.5, 3.5, 4.5),
+#'     xmax = 1,
+#'     ymax = c(1.5, 2.5, 3.5, 4.5, 5.5),
+#'     fill = seq(1, 5),
+#'     label = c(
+#'         "signaling", "cell-cell signaling", "synaptic signaling",
+#'         "trans-synaptic signaling", "anterograde trans-synaptic signaling"
+#'     )
 #' )
 #' library(ggplot2)
-#' ggplot(plotdata, aes(x=x, y=y, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
-#'       fill=fill, label=label)) + geom_sunburst(size=0.5, angle=-90) +
-#'       coord_polar()
+#' ggplot(plotdata, aes(
+#'     x = x, y = y, xmin = xmin, ymin = ymin, xmax = xmax, ymax = ymax,
+#'     fill = fill, label = label
+#' )) +
+#'     geom_sunburst(size = 0.5, angle = -90) +
+#'     coord_polar()
 geom_sunburst <- make_constructor(GeomSunburst)

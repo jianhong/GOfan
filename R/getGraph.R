@@ -12,23 +12,23 @@
 #' @export
 #' @examples
 #' library(org.Dr.eg.db)
-#' goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916","GO:0050804")
-#' g <- getGraph(data.frame(ID=goids), org=org.Dr.eg.db, onto='BP')
+#' goids <- c("GO:0099536", "GO:0099537", "GO:0007268", "GO:0098916", "GO:0050804")
+#' g <- getGraph(data.frame(ID = goids), org = org.Dr.eg.db, onto = "BP")
 #'
 getGraph <- function(df,
                      org,
-                     termID='ID',
-                     onto = c('BP', 'CC', 'MF')){
+                     termID = "ID",
+                     onto = c("BP", "CC", "MF")) {
     stopifnot(is.data.frame(df))
     stopifnot(termID %in% colnames(df))
     onto <- match.arg(onto)
-    stopifnot(is(org, 'OrgDb') || is(org, 'Go3AnnDbBimap'))
+    stopifnot(is(org, "OrgDb") || is(org, "Go3AnnDbBimap"))
     ## get all ancestors
     go_terms <- df[, termID]
-    anc <- getAncestors_df(go_terms, onto = onto)
+    anc <- getAncestors(go_terms, onto = onto)
     g <- goGraph(anc)
     ## simplify graph by keeping only strongest parent,
     ## to make the DAG to a tree like
-    g <- simplifyDAG(g, org=org) ## time consuming
+    g <- simplifyDAG(g, org = org) ## time consuming
     return(g)
 }

@@ -11,24 +11,27 @@
 #' library(igraph)
 #' library(org.Dr.eg.db)
 #' edges <- data.frame(
-#'   ancestor=c("GO:0007154", "GO:0007267", "GO:0099536", "GO:0099537"),
-#'   offspring=c("GO:0099536", "GO:0099536", "GO:0099537", "GO:0098916"))
+#'     ancestor = c("GO:0007154", "GO:0007267", "GO:0099536", "GO:0099537"),
+#'     offspring = c("GO:0099536", "GO:0099536", "GO:0099537", "GO:0098916")
+#' )
 #' g <- graph_from_data_frame(edges)
 #' g1 <- simplifyDAG(g, org.Dr.eg.db)
 simplifyDAG <- function(g, org) {
-    stopifnot(is(g, 'igraph'))
-    stopifnot(is(org, 'OrgDb') || is(org, 'Go3AnnDbBimap'))
-    stopifnot('No GO terms available in the graph'=length(names(V(g)))>0)
+    stopifnot(is(g, "igraph"))
+    stopifnot(is(org, "OrgDb") || is(org, "Go3AnnDbBimap"))
+    stopifnot("No GO terms available in the graph" = length(names(V(g))) > 0)
     edges_to_keep <- c()
-    allAlias <- getGOalias(names(V(g)), org=org)
+    allAlias <- getGOalias(names(V(g)), org = org)
     for (v in names(V(g))) {
         parents <- neighbors(g, v, mode = "in")
         if (length(parents) < 1) next
 
         # compute Jaccard with each parent
-        jaccs <- vapply(names(parents), function(p)
-            jaccard(allAlias[[v]], allAlias[[p]]),
-            FUN.VALUE = numeric(1L))
+        jaccs <- vapply(names(parents), function(p) {
+            jaccard(allAlias[[v]], allAlias[[p]])
+        },
+        FUN.VALUE = numeric(1L)
+        )
         best_parent <- parents[which.max(jaccs)]
         edges_to_keep <- rbind(edges_to_keep, c(best_parent$name, v))
     }
@@ -44,12 +47,12 @@ simplifyDAG <- function(g, org) {
 }
 
 #' @importFrom igraph degree delete_vertices
-removeIsolatedVertices <- function(g){
-    vertex_degrees <- degree(g, mode='all')
+removeIsolatedVertices <- function(g) {
+    vertex_degrees <- degree(g, mode = "all")
     isolated_vertices <- which(vertex_degrees == 0)
-    if(length(isolated_vertices)){
+    if (length(isolated_vertices)) {
         delete_vertices(g, isolated_vertices)
-    }else{
+    } else {
         g
     }
 }

@@ -1,3 +1,13 @@
+Changes in version 0.99.2
+
+  o re-style the code.
+  o rename getAncestors_df as getAncestors.
+  o update the Description in DESCRIPTION.
+  o mv ggplot2 into Depends.
+  o using single quotes to refer to arguments in error messages.
+  o update rescale parameter validating.
+  o update vignettes.
+
 Changes in version 0.99.1
 
   o Add returning value section for geom_sunburst.Rd.

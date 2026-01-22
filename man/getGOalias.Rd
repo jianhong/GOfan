@@ -19,7 +19,9 @@ Extract all the entrez IDs from a given GO IDs
 }
 \examples{
 library(org.Dr.eg.db)
-ids <- c("GO:0099536", "GO:0099537", "GO:0007268",
-         "GO:0098916", "GO:0050804", "GO:0099177")
+ids <- c(
+    "GO:0099536", "GO:0099537", "GO:0007268",
+    "GO:0098916", "GO:0050804", "GO:0099177"
+)
 eids <- getGOalias(ids, org.Dr.eg.db)
 }
