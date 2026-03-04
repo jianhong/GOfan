@@ -1,4 +1,4 @@
-# `GOfan`: Annotating Genomic Regions Through Chromatin Interaction Links
+# `GOfan`: GO Enrichment Sunburst Plot
 
 ## Overview
 
